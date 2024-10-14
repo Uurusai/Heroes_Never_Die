@@ -1,0 +1,60 @@
+[gd_scene load_steps=7 format=3 uid="uid://dagcfsopkngbk"]
+
+[ext_resource type="Texture2D" uid="uid://cs3cya2ub3nt0" path="res://Asset/BG/4.0.png" id="1_drs7u"]
+[ext_resource type="Texture2D" uid="uid://corr8thwpp6nk" path="res://Asset/BG/3.0.png" id="2_dwgh5"]
+[ext_resource type="Texture2D" uid="uid://gutw8u00ot7k" path="res://Asset/BG/2.0.png" id="3_fv0l7"]
+[ext_resource type="Texture2D" uid="uid://dmlde0dy5kp5g" path="res://Asset/BG/1.0.png" id="4_wfhp5"]
+[ext_resource type="Texture2D" uid="uid://cockfgv58uaax" path="res://Asset/0a8859120aeb49e0ec0ac60cd0912782.png" id="5_hhscc"]
+
+[sub_resource type="Environment" id="Environment_7yyrk"]
+background_mode = 3
+glow_enabled = true
+glow_intensity = 0.46
+glow_strength = 2.0
+glow_blend_mode = 1
+
+[node name="BG" type="Node2D"]
+position = Vector2(4, 4)
+
+[node name="ParallaxBackground" type="ParallaxBackground" parent="."]
+
+[node name="ParallaxLayer4" type="ParallaxLayer" parent="ParallaxBackground"]
+motion_mirroring = Vector2(1450, 0)
+
+[node name="Sprite2D" type="Sprite2D" parent="ParallaxBackground/ParallaxLayer4"]
+position = Vector2(713.9, 335)
+scale = Vector2(0.811, 0.811)
+texture = ExtResource("1_drs7u")
+
+[node name="ParallaxLayer" type="ParallaxLayer" parent="ParallaxBackground"]
+motion_mirroring = Vector2(1450, 0)
+
+[node name="Sprite2D" type="Sprite2D" parent="ParallaxBackground/ParallaxLayer"]
+position = Vector2(713.5, 339)
+scale = Vector2(0.815, 0.815)
+texture = ExtResource("2_dwgh5")
+
+[node name="ParallaxLayer2" type="ParallaxLayer" parent="ParallaxBackground"]
+motion_mirroring = Vector2(1450, 0)
+
+[node name="Sprite2D" type="Sprite2D" parent="ParallaxBackground/ParallaxLayer2"]
+position = Vector2(708.4, 342)
+scale = Vector2(0.806, 0.806)
+texture = ExtResource("3_fv0l7")
+
+[node name="ParallaxLayer3" type="ParallaxLayer" parent="ParallaxBackground"]
+motion_mirroring = Vector2(1150, 0)
+
+[node name="Sprite2D" type="Sprite2D" parent="ParallaxBackground/ParallaxLayer3"]
+position = Vector2(711.6, 344)
+scale = Vector2(0.814, 0.814)
+texture = ExtResource("4_wfhp5")
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+modulate = Color(2, 2, 2, 1)
+position = Vector2(350.625, 407.575)
+scale = Vector2(0.167749, 0.167749)
+texture = ExtResource("5_hhscc")
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("Environment_7yyrk")
