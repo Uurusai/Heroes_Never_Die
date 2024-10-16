@@ -1,6 +1,5 @@
 extends CharacterBody2D
 
-#@onready var sword = get_parent().get_node("")
 @export var speed:float = 300.0
 @export var jump_velocity:float = -400.0
 @export var double_jump_velocity:float = -400.0
@@ -11,8 +10,10 @@ var animation_locked : bool = false
 var direction : Vector2 = Vector2.ZERO
 var was_in_air : bool = false 
 @onready var timer : Timer = $Timer
+var can_take_damage : bool = true
 
-
+func _ready() -> void:
+	Global.player_body = self 
 
 func _physics_process(delta: float) -> void:
 	# Add the gravity.
@@ -31,12 +32,8 @@ func _physics_process(delta: float) -> void:
 		if is_on_floor():
 			jump()
 		elif not has_double_jumped:
-			double_jump()
-	 
-			
+			double_jump()		
 
-	# Get the input direction and handle the movement/deceleration.
-	# As good practice, you should replace UI actions with custom gameplay actions.
 	direction = Input.get_vector("left", "right","up", "down")
 	if direction && animated_sprite.animation != "jump_End" :
 		velocity.x = direction.x * speed
@@ -45,6 +42,9 @@ func _physics_process(delta: float) -> void:
 	update_animation()
 	update_facing_direction()
 	move_and_slide()
+	if can_take_damage:
+		check_hits()
+		
 	if Input.is_action_just_pressed("attack1"):
 		attack1()
 	if Input.is_action_just_pressed("left"):
@@ -96,13 +96,20 @@ func check_hits():
 	var hitbox_areas =$player_damage_area.get_overlapping_areas()
 	var damage : int
 	if hitbox_areas :
-		var hitbox = hitbox_areas.front()
-		if hitbox.get_parent() == $CharacterBody2D/Enemy_attack :
-			damage = Global.crow_damage
-			player_health -= damage
-			if player_health <= 0:
-				animated_sprite.play("dead")
-				$Timer.start(0.5)
-		
-func _on_timer_timeout() -> void:
+		for hitbox in hitbox_areas:
+			if hitbox.get_parent() == Global.crow && hitbox.is_in_group("hitters"):
+				damage = Global.crow_damage
+				player_health -= damage
+				can_take_damage = false
+				$damage_cooldown.start(1.5)
+				print(player_health)
+				if player_health <= 0:
+					animated_sprite.play("die")
+					$Timer.start(1.5)
+			
+func _on_timer_timeout() -> void: 
 	get_parent().queue_free()
+
+func _on_damage_cooldown_timeout() -> void:
+	if player_health >= 0 :
+		can_take_damage = true
