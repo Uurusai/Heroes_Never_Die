@@ -5,6 +5,7 @@ extends CharacterBody2D
 @export var double_jump_velocity:float = -400.0
 var has_double_jumped:bool = false 
 @export var player_health:float = 30.0
+@export var max_player_health : float = 30.0
 @onready var animated_sprite: AnimatedSprite2D = $AnimatedSprite2D
 var animation_locked : bool = false 
 var direction : Vector2 = Vector2.ZERO
@@ -97,9 +98,13 @@ func check_hits():
 	var damage : int
 	if hitbox_areas :
 		for hitbox in hitbox_areas:
-			if hitbox.get_parent() == Global.crow && hitbox.is_in_group("hitters"):
-				damage = Global.crow_damage
+			if hitbox.is_in_group("hitters"):
+				if hitbox.get_parent() == Global.crow:
+					damage = Global.crow_damage
+				elif hitbox.get_parent() == Global.bat_bod:
+					damage = Global.bat_damage 
 				player_health -= damage
+				get_node("health_Bar").update_health(player_health,max_player_health)
 				can_take_damage = false
 				$damage_cooldown.start(1.5)
 				print(player_health)

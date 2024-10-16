@@ -1,4 +1,4 @@
-[gd_scene load_steps=51 format=3 uid="uid://ds25kbvnn00kq"]
+[gd_scene load_steps=52 format=3 uid="uid://ds25kbvnn00kq"]
 
 [ext_resource type="Texture2D" uid="uid://bn04qh7ti01f6" path="res://assets/Legacy-Fantasy - High Forest 2.0/Legacy-Fantasy - High Forest 2.3/Character/Idle/Idle-Sheet.png" id="1_fbcat"]
 [ext_resource type="Script" path="res://Character/player.gd" id="1_plvya"]
@@ -7,6 +7,7 @@
 [ext_resource type="Texture2D" uid="uid://c6suxt3w2x2a5" path="res://assets/Legacy-Fantasy - High Forest 2.0/Legacy-Fantasy - High Forest 2.3/Character/Jumlp-All/Jump-All-Sheet.png" id="3_vdxb2"]
 [ext_resource type="Texture2D" uid="uid://cc068qpevoyd6" path="res://assets/Legacy-Fantasy - High Forest 2.0/Legacy-Fantasy - High Forest 2.3/Character/Run/Run-Sheet.png" id="4_22kuj"]
 [ext_resource type="Script" path="res://Character/sword.gd" id="6_uypnd"]
+[ext_resource type="PackedScene" uid="uid://cak2brrf3w2ba" path="res://health_bar.tscn" id="8_wmrfs"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_1fga4"]
 atlas = ExtResource("2_3j8ic")
@@ -372,6 +373,12 @@ position = Vector2(13, 11)
 shape = SubResource("CapsuleShape2D_o1qy2")
 
 [node name="damage_cooldown" type="Timer" parent="."]
+
+[node name="health_Bar" parent="." instance=ExtResource("8_wmrfs")]
+offset_left = -20.0
+offset_top = -32.0
+offset_right = -20.0
+offset_bottom = -32.0
 
 [connection signal="animation_finished" from="AnimatedSprite2D" to="." method="_on_animated_sprite_2d_animation_finished"]
 [connection signal="body_entered" from="Sword" to="Sword" method="_on_body_entered"]
