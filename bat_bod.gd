@@ -3,6 +3,7 @@ extends CharacterBody2D
 var screen_size = get_viewport_rect().size
 var animation_locked : bool = false
 var found_player : bool = false
+var bat_health : float = 20 
 @export var speed: float = 100.0
 @onready var bat_sprite : AnimatedSprite2D = $BatSprite2D
 
@@ -62,8 +63,18 @@ func flip():
 func _on_bat_attack_area_body_entered(body: Node2D) -> void:
 	if body == Global.player_body :
 		bat_sprite.play("bite")
-		$bat_damage_area/attack_cooldown.start(1.5)
+		$bat_attack_area/attack_cooldown.start(1.5)
 
 func _on_attack_cooldown_timeout() -> void:
 	$bat_attack_area/CollisionShape2D.disabled = false
 	
+func _on_bat_damage_area_area_entered(area: Area2D) -> void:
+	if area.get_parent() == Global.player_body and area.is_in_group("player_hitter"):
+		bat_health -= Global.player_damage
+		print(bat_health)
+		if bat_health <= 0 :
+			bat_sprite.play("die")
+			$bat_damage_area/death_timer.start(2)
+			
+func _on_death_timer_timeout() -> void:
+	get_parent().queue_free()
