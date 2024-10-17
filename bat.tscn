@@ -333,21 +333,23 @@ animation = &"bite"
 frame = 7
 frame_progress = 1.0
 
-[node name="bat_damage_area" type="Area2D" parent="bat_bod" groups=["hitters"]]
+[node name="bat_damage_area" type="Area2D" parent="bat_bod"]
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="bat_bod/bat_damage_area"]
 position = Vector2(67, 57.5)
 shape = SubResource("RectangleShape2D_q6udn")
 debug_color = Color(0.105882, 0.286275, 0.823529, 0.419608)
 
-[node name="attack_cooldown" type="Timer" parent="bat_bod/bat_damage_area"]
+[node name="death_timer" type="Timer" parent="bat_bod/bat_damage_area"]
 
-[node name="bat_attack_area" type="Area2D" parent="bat_bod"]
+[node name="bat_attack_area" type="Area2D" parent="bat_bod" groups=["hitters"]]
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="bat_bod/bat_attack_area"]
 position = Vector2(18, 83)
 shape = SubResource("CircleShape2D_cf4ou")
 debug_color = Color(0, 0, 0, 0.42)
+
+[node name="attack_cooldown" type="Timer" parent="bat_bod/bat_attack_area"]
 
 [node name="bat_detection_area" type="Area2D" parent="bat_bod"]
 
@@ -358,7 +360,7 @@ shape = SubResource("RectangleShape2D_gfkdq")
 [node name="bat_activation" type="Area2D" parent="bat_bod"]
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="bat_bod/bat_activation"]
-position = Vector2(52, 64)
+position = Vector2(39, 60)
 shape = SubResource("RectangleShape2D_s3ukh")
 debug_color = Color(0.897833, 0.284569, 0.357826, 0.42)
 
@@ -366,8 +368,10 @@ debug_color = Color(0.897833, 0.284569, 0.357826, 0.42)
 autostart = true
 
 [connection signal="animation_finished" from="bat_bod/BatSprite2D" to="bat_bod" method="_on_bat_sprite_2d_animation_finished"]
-[connection signal="timeout" from="bat_bod/bat_damage_area/attack_cooldown" to="bat_bod" method="_on_attack_cooldown_timeout"]
+[connection signal="area_entered" from="bat_bod/bat_damage_area" to="bat_bod" method="_on_bat_damage_area_area_entered"]
+[connection signal="timeout" from="bat_bod/bat_damage_area/death_timer" to="bat_bod" method="_on_death_timer_timeout"]
 [connection signal="body_entered" from="bat_bod/bat_attack_area" to="bat_bod" method="_on_bat_attack_area_body_entered"]
+[connection signal="timeout" from="bat_bod/bat_attack_area/attack_cooldown" to="bat_bod" method="_on_attack_cooldown_timeout"]
 [connection signal="body_entered" from="bat_bod/bat_detection_area" to="bat_bod" method="_on_bat_detection_area_body_entered"]
 [connection signal="body_entered" from="bat_bod/bat_activation" to="bat_bod" method="_on_bat_activation_body_entered"]
 [connection signal="timeout" from="bat_bod/bat_timer" to="bat_bod" method="_on_bat_timer_timeout"]
