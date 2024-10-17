@@ -12,9 +12,16 @@ var direction : Vector2 = Vector2.ZERO
 var was_in_air : bool = false 
 @onready var timer : Timer = $Timer
 var can_take_damage : bool = true
+@onready var pre_jump_sfx: AudioStreamPlayer2D = $pre_jump_sfx
+@onready var post_jump_sfx: AudioStreamPlayer2D = $post_jump_sfx
+@onready var run_sfx: AudioStreamPlayer2D = $run_sfx
+@onready var hurt_g_sfx: AudioStreamPlayer2D = $hurt_g_sfx
+
 
 func _ready() -> void:
 	Global.player_body = self 
+	$bg_music_sfx.play()
+	$cricket_sfx.play()
 
 func _physics_process(delta: float) -> void:
 	# Add the gravity.
@@ -38,6 +45,7 @@ func _physics_process(delta: float) -> void:
 	direction = Input.get_vector("left", "right","up", "down")
 	if direction && animated_sprite.animation != "jump_End" :
 		velocity.x = direction.x * speed
+		run_sfx.play()
 	else:
 		velocity.x = move_toward(velocity.x, 0, speed)
 	update_animation()
@@ -71,9 +79,11 @@ func update_facing_direction ():
 func jump():
 	velocity.y = jump_velocity
 	animated_sprite.play("jump_Start")
+	pre_jump_sfx.play()
 	animation_locked = true 
 func land():
 	animated_sprite.play("jump_End")
+	post_jump_sfx.play()
 	animation_locked = true
 
 func double_jump():
@@ -90,6 +100,7 @@ func _on_animated_sprite_2d_animation_finished() -> void:
 		
 func attack1():
 	animated_sprite.play("attack")
+	$attack_sfx.play()
 	animation_locked = true 
 	$Sword/CollisionShape2D.disabled = false 
 
@@ -104,16 +115,23 @@ func check_hits():
 				elif hitbox.get_parent() == Global.bat_bod:
 					damage = Global.bat_damage 
 				player_health -= damage
+				hurt_g_sfx.play()
+				animated_sprite.play("hurt")
 				get_node("health_Bar").update_health(player_health,max_player_health)
 				can_take_damage = false
 				$damage_cooldown.start(1.5)
 				print(player_health)
 				if player_health <= 0:
+					Global.death_position = (Global.player_body.global_position)
 					animated_sprite.play("die")
 					$Timer.start(1.5)
 			
-func _on_timer_timeout() -> void: 
-	get_parent().queue_free()
+func _on_timer_timeout() -> void:
+	if Global.respawn_limit < 1 :
+		get_tree().reload_current_scene()
+		Global.respawn_limit += 1
+	elif Global.respawn_limit == 1 :
+		get_parent().queue_free()
 
 func _on_damage_cooldown_timeout() -> void:
 	if player_health >= 0 :
