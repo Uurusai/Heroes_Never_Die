@@ -45,7 +45,6 @@ func _physics_process(delta: float) -> void:
 	direction = Input.get_vector("left", "right","up", "down")
 	if direction && animated_sprite.animation != "jump_End" :
 		velocity.x = direction.x * speed
-		run_sfx.play()
 	else:
 		velocity.x = move_toward(velocity.x, 0, speed)
 	update_animation()
@@ -114,14 +113,14 @@ func check_hits():
 					damage = Global.crow_damage
 				elif hitbox.get_parent() == Global.bat_bod:
 					damage = Global.bat_damage 
-				player_health -= damage
+				Global.player_health -= damage
 				hurt_g_sfx.play()
 				animated_sprite.play("hurt")
 				get_node("health_Bar").update_health(player_health,max_player_health)
 				can_take_damage = false
 				$damage_cooldown.start(1.5)
 				print(player_health)
-				if player_health <= 0:
+				if Global.player_health <= 0:
 					Global.death_position = (Global.player_body.global_position)
 					animated_sprite.play("die")
 					$Timer.start(1.5)
@@ -131,8 +130,8 @@ func _on_timer_timeout() -> void:
 		get_tree().reload_current_scene()
 		Global.respawn_limit += 1
 	elif Global.respawn_limit == 1 :
-		get_parent().queue_free()
+		get_tree().change_scene_to_file("res://game_over.tscn")
 
 func _on_damage_cooldown_timeout() -> void:
-	if player_health >= 0 :
+	if Global.player_health >= 0 :
 		can_take_damage = true
