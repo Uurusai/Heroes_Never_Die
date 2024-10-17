@@ -6,7 +6,6 @@
 [ext_resource type="Texture2D" uid="uid://6dwtgpnsyay" path="res://assets/Legacy-Fantasy - High Forest 2.0/Legacy-Fantasy - High Forest 2.3/Character/Dead/Dead-Sheet.png" id="3_cjbkd"]
 [ext_resource type="Texture2D" uid="uid://c6suxt3w2x2a5" path="res://assets/Legacy-Fantasy - High Forest 2.0/Legacy-Fantasy - High Forest 2.3/Character/Jumlp-All/Jump-All-Sheet.png" id="3_vdxb2"]
 [ext_resource type="Texture2D" uid="uid://cc068qpevoyd6" path="res://assets/Legacy-Fantasy - High Forest 2.0/Legacy-Fantasy - High Forest 2.3/Character/Run/Run-Sheet.png" id="4_22kuj"]
-[ext_resource type="Script" path="res://Character/sword.gd" id="6_uypnd"]
 [ext_resource type="PackedScene" uid="uid://cak2brrf3w2ba" path="res://health_bar.tscn" id="8_wmrfs"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_1fga4"]
@@ -327,6 +326,24 @@ func _process(_delta: float) -> void:
 	pass
 "
 
+[sub_resource type="GDScript" id="GDScript_6kt3t"]
+script/source = "extends Area2D
+
+@export var damage:int = 10
+
+
+
+func _ready():
+	monitoring = true
+	 
+func _on_body_entered(body: Node2D) :
+	for child in body.get_children():
+		if child is Damageable:
+			child.hit(damage)
+			
+	
+"
+
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_x8rxk"]
 size = Vector2(17.5, 41)
 
@@ -350,11 +367,11 @@ position = Vector2(12, 8)
 shape = SubResource("CapsuleShape2D_tubj7")
 script = SubResource("GDScript_ydd1x")
 
-[node name="Sword" type="Area2D" parent="."]
+[node name="Sword" type="Area2D" parent="." groups=["player_hitter"]]
 position = Vector2(1, -3)
 collision_layer = 3
 collision_mask = 3
-script = ExtResource("6_uypnd")
+script = SubResource("GDScript_6kt3t")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Sword"]
 position = Vector2(43, 11)

@@ -1,7 +1,7 @@
 extends CharacterBody2D
 
 @export var speed = 0
-@export var health: float = 20
+@export var crow_health: float = 20
 var player = Global.player_body
 
 @onready var animated_sprite: AnimatedSprite2D = $crow_sprite
@@ -16,14 +16,8 @@ func _physics_process(delta: float) -> void:
 	if not is_on_floor():
 		velocity += get_gravity() * delta
 	move()
-	move_and_slide()
 
-	if !$RayCast2D.is_colliding():
-		if direction.x > 0:
-			velocity = direction * speed * 1
-		elif direction.x < 0 :
-			velocity = direction * speed * -1
-		flip()		
+	
 				
 func flip():
 	if direction.x>0 :
@@ -42,6 +36,15 @@ func choose(array):
 func move():
 	velocity = direction*speed
 	flip()
+	if $RayCast2D.is_colliding():
+		move_and_slide()
+	elif !$RayCast2D.is_colliding():
+		if direction.x > 0:
+			velocity = direction * speed * 1
+		elif direction.x < 0 :
+			velocity = direction * speed * -1
+		flip()		
+		move_and_slide()
 	
 
 func _on_crow_timer_timeout() -> void:
@@ -62,3 +65,16 @@ func _on_enemy_attack_body_entered(body: Node2D) -> void:
 	
 func _on_attack_timer_timeout() -> void:
 	$Enemy_attack/CollisionShape2D.disabled = false
+
+
+func _on_enemy_damage_area_entered(area: Area2D) -> void:
+	if area.get_parent() == Global.player_body and area.is_in_group("player_hitter"):
+		crow_health -= Global.player_damage
+		animated_sprite.play("hurt")
+		print(crow_health)
+		if crow_health <= 0 :
+			animated_sprite.play("die")
+			$Enemy_damage/Timer.start(2)
+			
+func _on_timer_timeout() -> void:
+	get_parent().queue_free()
